@@ -1,0 +1,13 @@
+{% extends 'miniforum/base.html' %}
+
+{% block 'title' %} スレッド作成 - MiniForum {% endblock %}
+
+{% block 'content' %}
+<h1>スレッド作成</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_div }}
+  <input type="submit" value="作成">
+</form>
+<a href="{% url 'miniforum:thread_index' %}">戻る</a>
+{% endblock %}
