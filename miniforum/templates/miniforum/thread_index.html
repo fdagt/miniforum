@@ -9,5 +9,6 @@
   <li><a href="{% url 'miniforum:thread_detail' thread.pk %}">{{ thread.title }}</a></li>
   {% endfor %}
 </ul>
+{% include 'miniforum/pagination.html' %}
 <a href="{% url 'miniforum:thread_create' %}">スレッド作成</a>
 {% endblock %}

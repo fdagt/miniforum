@@ -19,6 +19,13 @@ class ThreadIndexView(generic.ListView):
     template_name = 'miniforum/thread_index.html'
     ordering = '-updated_at'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['paginator_range'] = paginator.get_elided_page_range(page_obj.number, on_ends=1)
+        return context
+        
 class ThreadCreateView(generic.FormView):
     template_name = 'miniforum/thread_create.html'
     form_class = ThreadForm
@@ -33,10 +40,27 @@ class ThreadCreateView(generic.FormView):
             post.save()
         return HttpResponseRedirect(reverse('miniforum:thread_detail', args=(thread.pk,)))
 
-class ThreadDetailView(generic.DetailView):
-    model = Thread
-    template_name = 'miniforum/thread_detail.html'
+class ThreadDetailView(generic.base.RedirectView):
+    permanent = True
+    query_string = False
+    pattern_name = 'miniforum:post_index'
 
+class PostIndexView(generic.ListView):
+    paginate_by = 100
+    template_name = 'miniforum/post_index.html'
+
+    def get_queryset(self):
+        thread = get_object_or_404(Thread, pk=self.kwargs['pk'])
+        return thread.post_set.order_by('created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['thread'] = get_object_or_404(Thread, pk=self.kwargs['pk'])
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['paginator_range'] = paginator.get_elided_page_range(page_obj.number, on_ends=1)
+        return context
+    
 class PostCreateView(generic.FormView):
     template_name = 'miniforum/post_create.html'
     form_class = PostForm

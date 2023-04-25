@@ -1,0 +1,13 @@
+{% if page_obj.has_other_pages %}
+<nav>
+  {% for i in paginator_range %}
+  {% if i == Paginator.ELLIPSIS %}
+  <span>…</span>
+  {% elif i == page_obj.number %}
+  <span>{{ i }}</span>
+  {% else %}
+  <a href="{{ request.path }}?page={{ i }}">{{ i }}</a>
+  {% endif %}
+  {% endfor %}
+</nav>
+{% endif %}

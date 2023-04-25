@@ -4,9 +4,10 @@
 
 {% block 'content' %}
 <h1>{{ thread.title }}</h1>
-{% for post in thread.post_set.all %}
+{% for post in post_list %}
 <div>
-  <div>{{ forloop.counter }}.
+  {% load serial_number %}
+  <div>{% serial_number paginator.per_page page_obj.number forloop.counter %}.
     {% if post.user == None %}
     匿名
     {% else %}
@@ -16,6 +17,7 @@
   <div>{{ post.content|linebreaksbr }}</div>
 </div>
 {% endfor %}
+{% include 'miniforum/pagination.html' %}
 <div>
   <a href="{% url 'miniforum:post_create' thread.pk %}">書き込む</a>
 </div>
