@@ -24,8 +24,13 @@ class ThreadCreateView(generic.FormView):
     form_class = ThreadForm
     
     def form_valid(self, form):
-        thread = Thread(title=form.cleaned_data['title'])
-        thread.save()
+        with transaction.atomic():
+            thread = Thread(title=form.cleaned_data['title'])
+            thread.save()
+            post = Post(thread=thread, content=form.cleaned_data['content'])
+            if self.request.user.is_authenticated:
+                post.user = self.request.user
+            post.save()
         return HttpResponseRedirect(reverse('miniforum:thread_detail', args=(thread.pk,)))
 
 class ThreadDetailView(generic.DetailView):
