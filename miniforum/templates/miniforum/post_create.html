@@ -1,0 +1,14 @@
+{% extends 'miniforum/base.html' %}
+
+{% block 'title' %} 書き込む - MiniForum {% endblock %}
+
+{% block 'content' %}
+<h1>{{ thread.title }}</h1>
+<h2>書き込む</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_div }}
+  <input type="submit" value="書き込む">
+</form>
+<a href="{% url 'miniforum:thread_detail' thread.pk %}">戻る</a>
+{% endblock %}

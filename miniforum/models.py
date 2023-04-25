@@ -7,6 +7,10 @@ class Thread(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
 class Post(models.Model):
+    thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     content = models.CharField(max_length=1000)
+
+    def format_created_at(self):
+        return self.created_at.strftime("%Y/%m/%d") + " (" + ["月", "火", "水", "木", "金", "土", "日"][self.created_at.weekday()] + ") "+ self.created_at.strftime("%H:%M")

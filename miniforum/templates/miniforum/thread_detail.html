@@ -1,0 +1,25 @@
+{% extends 'miniforum/base.html' %}
+
+{% block 'title' %} {{ thread.title }} - MiniForum {% endblock %}
+
+{% block 'content' %}
+<h1>{{ thread.title }}</h1>
+{% for post in thread.post_set.all %}
+<div>
+  <div>{{ forloop.counter }}.
+    {% if post.user == None %}
+    匿名
+    {% else %}
+    {% endif %}
+    {{ post.format_created_at }}
+  </div>
+  <div>{{ post.content|linebreaksbr }}</div>
+</div>
+{% endfor %}
+<div>
+  <a href="{% url 'miniforum:post_create' thread.pk %}">書き込む</a>
+</div>
+<div>
+  <a href="{% url 'miniforum:thread_index' %}">スレッド一覧</a>
+</div>
+{% endblock %}
