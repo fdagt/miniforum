@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Thread(models.Model):
     title = models.CharField(max_length=100)
@@ -16,7 +17,11 @@ class Post(models.Model):
     content = models.CharField(max_length=1000)
     
     def format_created_at(self):
-        return self.created_at.strftime("%Y/%m/%d") + " (" + ["月", "火", "水", "木", "金", "土", "日"][self.created_at.weekday()] + ") "+ self.created_at.strftime("%H:%M")
+        localtime = timezone.localtime(self.created_at)
+        date = localtime.strftime("%Y/%m/%d")
+        dayOfWeek = ["月", "火", "水", "木", "金", "土", "日"][localtime.weekday()]
+        time = localtime.strftime("%H:%M")
+        return date + " (" + dayOfWeek + ") " + time
 
 class Report(models.Model):
     thread = models.ForeignKey(Thread, null=True, on_delete=models.SET_NULL)
