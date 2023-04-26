@@ -9,6 +9,12 @@ from django.contrib.auth import authenticate, login, views as auth_views
 from .forms import ThreadForm, PostForm, LoginForm, RegisterForm
 from .models import Thread, Post
 
+def get_ip_address(request):
+    if 'HTTP_X_FORWARDED_FOR' in request.META:
+        return request.META['HTTP_X_FORWARDED_FOR']
+    else:
+        return request.META['REMOTE_ADDR']
+    
 class IndexView(generic.base.RedirectView):
     permanent = True
     query_string = False
@@ -35,7 +41,7 @@ class ThreadCreateView(generic.FormView):
         with transaction.atomic():
             thread = Thread(title=form.cleaned_data['title'])
             thread.save()
-            post = Post(thread=thread, content=form.cleaned_data['content'])
+            post = Post(thread=thread, content=form.cleaned_data['content'], ip_address=get_ip_address(self.request))
             if self.request.user.is_authenticated:
                 post.user = self.request.user
             post.save()
@@ -74,7 +80,7 @@ class PostCreateView(generic.FormView):
     def form_valid(self, form):
         with transaction.atomic():
             thread = get_object_or_404(Thread, pk=self.kwargs['pk'])
-            post = Post(thread=thread, content=form.cleaned_data['content'])
+            post = Post(thread=thread, content=form.cleaned_data['content'], ip_address=get_ip_address(self.request))
             if self.request.user.is_authenticated:
                 post.user = self.request.user
             thread.save() # updated_atを更新
