@@ -26,6 +26,9 @@ class ThreadIndexView(generic.ListView):
     template_name = 'miniforum/thread_index.html'
     ordering = '-updated_at'
 
+    def get_queryset(self):
+        return Thread.objects.filter(deleted_at=None).order_by('-updated_at')
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         paginator = context['paginator']
@@ -57,7 +60,7 @@ class PostIndexView(generic.ListView):
     template_name = 'miniforum/post_index.html'
 
     def get_queryset(self):
-        thread = get_object_or_404(Thread, pk=self.kwargs['pk'])
+        thread = get_object_or_404(Thread, pk=self.kwargs['pk'], deleted_at=None)
         return thread.post_set.order_by('created_at')
 
     def get_context_data(self, **kwargs):

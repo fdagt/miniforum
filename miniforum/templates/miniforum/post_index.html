@@ -8,6 +8,12 @@
 <div class="mx-1">
   {% for post in post_list %}
   <div class="my-3">
+    {% if post.deleted_at != None %}
+    <div class="text-muted small">
+      {% serial_number paginator.per_page page_obj.number forloop.counter %}.
+      この投稿は削除されました。
+    </div>
+    {% else %}
     <div class="mb-1">{% serial_number paginator.per_page page_obj.number forloop.counter %}.
       {% if post.user == None %}
       <small class="text-secondary">匿名</small>
@@ -17,6 +23,7 @@
       {{ post.format_created_at }}
     </div>
     <div class="mx-1">{{ post.content|linebreaksbr }}</div>
+    {% endif %}
   </div>
   {% endfor %}
 </div>
