@@ -3,11 +3,10 @@
 {% block 'title' %} ログイン - MiniForum {% endblock %}
 
 {% block 'content' %}
-<h1>ログイン</h1>
+<h1 class="my-2">ログイン</h1>
 <form method="post">
   {% csrf_token %}
-  {{ form.as_div }}
-  <input type="submit" value="ログイン">
+  {{ form }}
+  <input type="submit" value="ログイン" class="btn btn-primary">
 </form>
-<a href="{% url 'miniforum:thread_index' %}">戻る</a>
 {% endblock %}

@@ -3,25 +3,25 @@
 {% block 'title' %} {{ thread.title }} - MiniForum {% endblock %}
 
 {% block 'content' %}
-<h1>{{ thread.title }}</h1>
-{% for post in post_list %}
-<div>
-  {% load serial_number %}
-  <div>{% serial_number paginator.per_page page_obj.number forloop.counter %}.
-    {% if post.user == None %}
-    匿名
-    {% else %}
-    {% endif %}
-    {{ post.format_created_at }}
+<h1 class="my-2">{{ thread.title }}</h1>
+{% load serial_number %}
+<div class="mx-1">
+  {% for post in post_list %}
+  <div class="my-3">
+    <div class="mb-1">{% serial_number paginator.per_page page_obj.number forloop.counter %}.
+      {% if post.user == None %}
+      <small class="text-secondary">匿名</small>
+      {% else %}
+      {{ post.user.username }}
+      {% endif %}
+      {{ post.format_created_at }}
+    </div>
+    <div class="mx-1">{{ post.content|linebreaksbr }}</div>
   </div>
-  <div>{{ post.content|linebreaksbr }}</div>
+  {% endfor %}
 </div>
-{% endfor %}
 {% include 'miniforum/pagination.html' %}
-<div>
-  <a href="{% url 'miniforum:post_create' thread.pk %}">書き込む</a>
-</div>
-<div>
-  <a href="{% url 'miniforum:thread_index' %}">スレッド一覧</a>
+<div class="my-2">
+  <a href="{% url 'miniforum:post_create' thread.pk %}">投稿</a>
 </div>
 {% endblock %}

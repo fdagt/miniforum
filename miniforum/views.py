@@ -1,13 +1,12 @@
+from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.views import generic
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from django.contrib.auth import views as auth_views
-from django.contrib.auth import forms as auth_forms
-from django.contrib.auth import login
-from .forms import ThreadForm, PostForm
+from django.contrib.auth import authenticate, login, views as auth_views
+from .forms import ThreadForm, PostForm, LoginForm, RegisterForm
 from .models import Thread, Post
 
 class IndexView(generic.base.RedirectView):
@@ -82,18 +81,31 @@ class PostCreateView(generic.FormView):
             post.save()
         return HttpResponseRedirect(reverse('miniforum:thread_detail', args=(thread.pk,)))
 
-class LoginView(auth_views.LoginView):
+class LoginView(generic.FormView):
     template_name = 'miniforum/login.html'
-    next_page = reverse_lazy('miniforum:thread_index')
-    
+    form_class = LoginForm
+
+    def form_valid(self, form):
+        user = authenticate(self.request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+        if user is not None:
+            login(self.request, user)
+            return HttpResponseRedirect(reverse('miniforum:thread_index'))
+        else:
+            form.add_error(None, "ユーザー名かパスワードが間違っています。")
+            return super().form_invalid(form)
+
 class LogoutView(auth_views.LogoutView):
     next_page = reverse_lazy('miniforum:thread_index')
 
 class RegisterView(generic.FormView):
     template_name = 'miniforum/register.html'
-    form_class = auth_forms.UserCreationForm
+    form_class = RegisterForm
 
     def form_valid(self, form):
-        user = form.save()
+        with transaction.atomic():
+            if User.objects.filter(username=form.cleaned_data['username']).exists():
+                form.add_error(None, "既に存在しているユーザー名です。")
+                return super().form_invalid(form)
+            user = User.objects.create_user(form.cleaned_data['username'], None, form.cleaned_data['password'])
         login(self.request, user)
         return HttpResponseRedirect(reverse('miniforum:thread_index'))

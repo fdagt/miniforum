@@ -6,8 +6,9 @@
 <h1>ユーザー登録</h1>
 <form method="post">
   {% csrf_token %}
-  {{ form.as_div }}
-  <input type="submit" value="登録">
+  {{ form }}
+  <div class="my-2">
+    <input type="submit" value="登録" class="btn btn-primary">
+  </div>
 </form>
-<a href="{% url 'miniforum:thread_index' %}">戻る</a>
 {% endblock %}
