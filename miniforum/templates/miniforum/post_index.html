@@ -25,6 +25,9 @@
     <div class="mx-1">{{ post.content|linebreaksbr }}</div>
     {% endif %}
   </div>
+  {% if not forloop.last %}
+  <div class="mx-2 border border-top-3" style="border-style: dashed !important;"></div>
+  {% endif %}
   {% endfor %}
 </div>
 {% include 'miniforum/pagination.html' %}
