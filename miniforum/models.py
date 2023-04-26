@@ -17,3 +17,14 @@ class Post(models.Model):
     
     def format_created_at(self):
         return self.created_at.strftime("%Y/%m/%d") + " (" + ["月", "火", "水", "木", "金", "土", "日"][self.created_at.weekday()] + ") "+ self.created_at.strftime("%H:%M")
+
+class Report(models.Model):
+    thread = models.ForeignKey(Thread, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    ip_address = models.CharField(max_length=100)
+    dealt_at = models.DateTimeField(default=None, null=True, blank=True)
+    content = models.CharField(max_length=1000)
+
+    def synopsis(self):
+        return self.content[0:20]

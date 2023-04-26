@@ -10,6 +10,10 @@ class PostForm(forms.Form):
     template_name = 'miniforum/form.html'
     content = forms.CharField(max_length=1000, label="投稿内容", widget=forms.Textarea(attrs={'rows':6, 'class': 'form-control'}))
 
+class ReportForm(forms.Form):
+    template_name = 'miniforum/form.html'
+    content = forms.CharField(max_length=1000, label="通報内容", widget=forms.Textarea(attrs={'rows':6, 'class': 'form-control'}))
+
 class LoginForm(forms.Form):
     template_name = 'miniforum/form.html'
     username = forms.CharField(required=True, max_length=150, label="ユーザー名", widget=forms.TextInput(attrs={'class': 'form-control'}))

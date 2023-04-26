@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Thread, Post
+from .models import Thread, Post, Report
 
 class PostInline(admin.StackedInline):
     model = Post
@@ -13,3 +13,9 @@ class ThreadAdmin(admin.ModelAdmin):
     inlines = [PostInline]
     
 admin.site.register(Thread, ThreadAdmin)
+
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ['synopsis', 'created_at', 'dealt_at']
+    list_filter = ['created_at', 'dealt_at']
+    
+admin.site.register(Report, ReportAdmin)

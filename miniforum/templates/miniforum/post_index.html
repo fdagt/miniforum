@@ -33,5 +33,6 @@
 {% include 'miniforum/pagination.html' %}
 <div class="my-2">
   <a href="{% url 'miniforum:post_create' thread.pk %}">投稿</a>
+  <a href="{% url 'miniforum:report_create' thread.pk %}">通報</a>
 </div>
 {% endblock %}

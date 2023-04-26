@@ -1,0 +1,17 @@
+{% extends 'miniforum/base.html' %}
+
+{% block 'title' %} 通報 - MiniForum {% endblock %}
+
+{% block 'content' %}
+<h1 class="my-2">{{ thread.title }} - 通報</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form }}
+  <div class="my-2">
+    <input type="submit" value="通報" class="btn btn-primary">
+  </div>
+</form>
+<div class="my-2">
+  <a href="{% url 'miniforum:thread_detail' thread.pk %}">スレッドに戻る</a>
+</div>
+{% endblock %}
