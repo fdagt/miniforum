@@ -14,6 +14,9 @@ def get_ip_address(request):
         return request.META['HTTP_X_FORWARDED_FOR']
     else:
         return request.META['REMOTE_ADDR']
+
+def get_thread_or_404(id):
+    return get_object_or_404(Thread, pk=id, deleted_at=None)
     
 class IndexView(generic.base.RedirectView):
     permanent = True
@@ -60,12 +63,12 @@ class PostIndexView(generic.ListView):
     template_name = 'miniforum/post_index.html'
 
     def get_queryset(self):
-        thread = get_object_or_404(Thread, pk=self.kwargs['pk'], deleted_at=None)
+        thread = get_thread_or_404(self.kwargs['pk'])
         return thread.post_set.order_by('created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['thread'] = get_object_or_404(Thread, pk=self.kwargs['pk'])
+        context['thread'] = get_thread_or_404(self.kwargs['pk'])
         paginator = context['paginator']
         page_obj = context['page_obj']
         context['paginator_range'] = paginator.get_elided_page_range(page_obj.number, on_ends=1)
@@ -77,12 +80,12 @@ class PostCreateView(generic.FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['thread'] = get_object_or_404(Thread, pk=self.kwargs['pk'])
+        context['thread'] = get_thread_or_404(self.kwargs['pk'])
         return context
         
     def form_valid(self, form):
         with transaction.atomic():
-            thread = get_object_or_404(Thread, pk=self.kwargs['pk'])
+            thread = get_thread_or_404(self.kwargs['pk'])
             post = Post(thread=thread, content=form.cleaned_data['content'], ip_address=get_ip_address(self.request))
             if self.request.user.is_authenticated:
                 post.user = self.request.user
@@ -96,12 +99,12 @@ class ReportCreateView(generic.FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['thread'] = get_object_or_404(Thread, pk=self.kwargs['pk'], deleted_at=None)
+        context['thread'] = get_thread_or_404(self.kwargs['pk'])
         return context
         
     def form_valid(self, form):
         with transaction.atomic():
-            thread = get_object_or_404(Thread, pk=self.kwargs['pk'], deleted_at=None)
+            thread = get_thread_or_404(self.kwargs['pk'])
             report = Report(thread=thread, content=form.cleaned_data['content'], ip_address=get_ip_address(self.request))
             if self.request.user.is_authenticated:
                 report.user = self.request.user
@@ -113,7 +116,7 @@ class ReportDoneView(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['thread'] = get_object_or_404(Thread, pk=self.kwargs['pk'], deleted_at=None)
+        context['thread'] = get_thread_or_404(self.kwargs['pk'])
         return context
 
 class LoginView(generic.FormView):
