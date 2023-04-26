@@ -1,0 +1,13 @@
+{% extends 'miniforum/base.html' %}
+
+{% block 'title' %} ユーザー登録 - MiniForum {% endblock %}
+
+{% block 'content' %}
+<h1>ユーザー登録</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_div }}
+  <input type="submit" value="登録">
+</form>
+<a href="{% url 'miniforum:thread_index' %}">戻る</a>
+{% endblock %}

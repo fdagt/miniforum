@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from django.views import generic
 from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-
+from django.contrib.auth import views as auth_views
+from django.contrib.auth import forms as auth_forms
+from django.contrib.auth import login
 from .forms import ThreadForm, PostForm
 from .models import Thread, Post
 
@@ -79,3 +81,19 @@ class PostCreateView(generic.FormView):
             thread.save() # updated_atを更新
             post.save()
         return HttpResponseRedirect(reverse('miniforum:thread_detail', args=(thread.pk,)))
+
+class LoginView(auth_views.LoginView):
+    template_name = 'miniforum/login.html'
+    next_page = reverse_lazy('miniforum:thread_index')
+    
+class LogoutView(auth_views.LogoutView):
+    next_page = reverse_lazy('miniforum:thread_index')
+
+class RegisterView(generic.FormView):
+    template_name = 'miniforum/register.html'
+    form_class = auth_forms.UserCreationForm
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return HttpResponseRedirect(reverse('miniforum:thread_index'))
