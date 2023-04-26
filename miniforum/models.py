@@ -9,7 +9,7 @@ class Thread(models.Model):
     
 class Post(models.Model):
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     ip_address = models.CharField(max_length=100)
     deleted_at = models.DateTimeField(default=None, null=True, blank=True)
