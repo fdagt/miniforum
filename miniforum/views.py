@@ -1,13 +1,13 @@
-from django.contrib.auth.models import User
-from django.shortcuts import render
-from django.views import generic
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse, reverse_lazy
-from django.shortcuts import get_object_or_404
-from django.db import transaction
 from django.contrib.auth import authenticate, login, views as auth_views
-from .forms import ThreadForm, PostForm, ReportForm, LoginForm, RegisterForm
-from .models import Thread, Post, Report
+from django.contrib.auth.models import User
+from django.db import transaction
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse, reverse_lazy
+from django.views import generic
+
+from .forms import LoginForm, PostForm, RegisterForm, ReportForm, ThreadForm
+from .models import Post, Report, Thread
 
 def get_ip_address(request):
     if 'HTTP_X_FORWARDED_FOR' in request.META:
